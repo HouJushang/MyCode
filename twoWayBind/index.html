@@ -17,25 +17,34 @@
 <script src="./handlebars-v4.0.5.js"></script>
 <script>
     var Hou = function (e) {
-        this.$dom = document.querySelector('#' + e.id);
-        this.template = Handlebars.compile(this.$dom.innerHTML);
-        var html = this.template(e.data);
-        this.$dom.innerHTML = html;
-
-        for (var key in e.data) {
-            Object.defineProperty(this, key, {
-                writable: false,
-                value: e.data[key],
+        var self = this;
+        self.$dom = document.querySelector('#' + e.id);
+        self.template = self.$dom.innerHTML
+        self.$data = e.data;
+        self.render = function(){
+            template = Handlebars.compile(self.template);
+            html = template(self.$data)
+            self.$dom.innerHTML = html
+        }
+        self.bindData = function(obj,key) {
+            Object.defineProperty(obj, key, {
                 get: function () {
-                    console.log(1)
+                    return self.$data[key]
                 },
-                set: function () {
-                    console.log(2)
-                }
+                set: function (e) {
+                    self.$data[key] = e
+                    self.render()
+                },
             })
         }
+        self.init = function(){
+            for (var key in self.$data) {
+                self.bindData(self,key)
+            }
+            self.render()
+        }
 
-
+        self.init();
     }
     var app = new Hou({
         id: 'app',
@@ -44,6 +53,5 @@
             content: 'This is content'
         }
     })
-    console.log(app);
 </script>
 </html>
