@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>双向数据绑定</title>
+</head>
+<body>
+<hou id="app">
+    <h1>
+        {{title}}
+    </h1>
+    <content>
+        {{content}}
+    </content>
+</hou>
+</body>
+<script src="./handlebars-v4.0.5.js"></script>
+<script>
+    var Hou = function (e) {
+        this.$dom = document.querySelector('#' + e.id);
+        this.template = Handlebars.compile(this.$dom.innerHTML);
+        var html = this.template(e.data);
+        this.$dom.innerHTML = html;
+
+        for (var key in e.data) {
+            Object.defineProperty(this, key, {
+                writable: false,
+                value: e.data[key],
+                get: function () {
+                    console.log(1)
+                },
+                set: function () {
+                    console.log(2)
+                }
+            })
+        }
+
+
+    }
+    var app = new Hou({
+        id: 'app',
+        data: {
+            title: 'my title',
+            content: 'This is content'
+        }
+    })
+    console.log(app);
+</script>
+</html>
